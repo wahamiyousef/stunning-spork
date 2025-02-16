@@ -14,7 +14,7 @@ function HomePage() {
   }
 
   return (
-    <div className="text-black p-8">
+    <div className="text-black sm:p-8 pt-24 p-8">
       <h1 className="text-3xl font-semibold text-center bg-gradient-to-r from-blue-500 via-blue-700 to-black text-transparent bg-clip-text mb-8">
         Welcome to ConcertExpensr
       </h1>

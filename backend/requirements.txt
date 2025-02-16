@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+psycopg2
+passlib
+passlib[bcrypt]
+python-jose
+
+jose
+typing
+pydantic

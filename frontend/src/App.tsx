@@ -11,6 +11,8 @@ import { LoaderCircle } from 'lucide-react';
 import HomePage from './pages/HomePage';
 import GroupsPage from './pages/GroupsPage';
 import CreateGroupsPage from './pages/CreateGroupsPage';
+import Navbar from './components/Navbar';
+import SignUp from './pages/SignUp';
 // import { SharedDataProvider } from './components/SharedDataProvider';
 
 type userType = {
@@ -48,19 +50,15 @@ function App() {
     </div>;
   }
 
-  /*
-  const hideNavbarRoutes = ['/chat', '/upload-chat'];
-  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
-  */
-
   return (
     <Router>
         <div className="min-h-screen h-fit bg-gray-100">
+          <Navbar />
           {/* <Navbar /> */}
           <Routes>
             <Route path='/login' element={!user ? <Login /> : <Navigate to='/home' />} />
             <Route path='/' element={!user ? <Login /> : <Navigate to='/home' />} />
-            {/* <Route path='/signup' element={!user ? <SignUp /> : <Navigate to='/home' />} /> */}
+            <Route path='/signup' element={!user ? <SignUp /> : <Navigate to='/home' />} />
             <Route path='/home' element={user ? <HomePage /> : <Navigate to='/login' />} />
             <Route path='/groups' element={user ? <GroupsPage /> : <Navigate to='/login' />} />
             <Route path='/create-group' element={user ? <CreateGroupsPage /> : <Navigate to='/login' />} />

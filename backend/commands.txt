@@ -1,0 +1,7 @@
+# create venv
+py -m venv .venv
+# acrivate venv
+.venv\Scripts\activate
+
+# uvicron
+uvicorn main:app
