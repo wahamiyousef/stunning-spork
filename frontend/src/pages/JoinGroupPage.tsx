@@ -42,12 +42,14 @@ function JoinGroupPage() {
 
   const handleJoinGroup = async () => {
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/api/join_group/${leaderId}/${groupName}/${user_id}`);
+      const response = await axios.post(`http://127.0.0.1:8000/api/join_group/${leaderId}/${groupId}/${user_id}`);
       if (response.status === 200) {
         console.log("Successfully joined the group!");
+        alert('Successfully joined the group!');
       }
     } catch (error) {
       console.error("Error joining group:", error);
+      alert("Failed to join the group. Please try again later.");
       console.log("Failed to join the group. Please try again later.");
     }
   };
@@ -59,7 +61,7 @@ function JoinGroupPage() {
   return (
     <div className="text-black sm:p-8 pt-24 p-8">
       <CircleArrowLeft onClick={() => navigate(`/groups`)} className="bg-blue-400 sm:w-8 sm:h-8 w-10 h-10 sm:rounded-2xl rounded-3xl cursor-pointer sm:relative top-6 absolute" />
-      <div className="lg:justify-items-center">
+      <div className="flex lg:justify-center lg:justify-items-center">
         <Card className="bg-white rounded-xl shadow-lg p-6 mb-6 lg:w-2/3 justify-center">
           <CardHeader>
             <CardTitle className="text-3xl font-semibold text-center text-black mb-8">{group.group_name}</CardTitle>

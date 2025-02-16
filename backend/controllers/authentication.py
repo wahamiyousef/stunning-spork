@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Response
 from pydantic import BaseModel
 from typing import Union
 from passlib.hash import bcrypt
@@ -51,8 +51,9 @@ def create_access_token(email: str):
   to_encode = {"sub": email, "exp": expire}
   return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-@router.post("/user/login", response_model=Token)
-async def login(login_input: LoginInput):
+
+@router.post("/user/login")
+async def login(login_input: LoginInput, response: Response):
   """
   Authenticate the user and return a JWT token.
 
@@ -67,7 +68,7 @@ async def login(login_input: LoginInput):
     cursor.execute("SELECT password_hash FROM users WHERE email = %s;", (login_input.email,))
     user = cursor.fetchone()
     
-    cursor.execute("SELECT user_id FROM users WHERE email = %s;", (login_input.email,))
+    cursor.execute("SELECT user_id, username FROM users WHERE email = %s;", (login_input.email,))
     user_id_result = cursor.fetchone()
 
   if not user or not verify_password(login_input.password, user["password_hash"]):
@@ -75,8 +76,22 @@ async def login(login_input: LoginInput):
 
   token = create_access_token(email=login_input.email)
   expires_at = (datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)).isoformat()
+  response.set_cookie(
+    "access_token",
+    token,
+    httponly=True,
+    secure=False,  # Set this to False for development, True for production if using HTTPS
+    max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    expires=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    samesite="None",  # This is crucial for cross-origin cookies
+    path="/"
+  )
 
-  return {"user_id": user_id_result['user_id'], "email": login_input.email, "token": token, "expires_at": expires_at}
+
+
+
+  #return {"message": "Login successful!"}
+  return {"user_id": user_id_result['user_id'], "username": user_id_result['username'], "email": login_input.email, "token": token, "expires_at": expires_at}
 
 
 
@@ -132,7 +147,7 @@ async def signup(login_input: LoginInput):
       conn.commit()
 
       cursor.execute("SELECT user_id FROM users WHERE email = %s;", (login_input.email,))
-      user_id = cursor.fetchone()
+      user_id = cursor.fetchone()['user_id']
 
     except Exception as e:
       # Check for duplicate email or username
@@ -146,6 +161,7 @@ async def signup(login_input: LoginInput):
   return {"user_id": user_id, "email": login_input.email, "token": token, "expires_at": expires_at}
 
 
+'''
 @router.get("/user/session")
 async def check_session(request: Request):
   """
@@ -184,4 +200,23 @@ async def check_session(request: Request):
     
   except JWTError:
     raise HTTPException(status_code=401, detail="Invalid or expired token")
-    
+'''
+
+@router.get("/user/session")
+async def check_session(request: Request):
+  token = request.cookies.get("access_token")
+  print(f"Received token: {token}")
+  if not token:
+    raise HTTPException(status_code=401, detail="Token missing or invalid")
+  
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    email = payload.get("sub")
+
+    if not email:
+      raise HTTPException(status_code=401, detail="Invalid token")
+
+    # Optionally, fetch user info from the database here if needed
+    return {"email": email, "token": token}
+  except JWTError:
+    raise HTTPException(status_code=401, detail="Invalid or expired token")

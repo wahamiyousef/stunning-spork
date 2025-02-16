@@ -42,11 +42,36 @@ function Login(): JSX.Element {
   const user = useAppSelector(state => state.user.user);
 
   useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await axios.get("/api/user/session", {
+          withCredentials: true,  // This ensures cookies are sent with the request
+        });
+
+        if (response.data.email) {
+          console.log(response.data);
+          // Optionally store user data in localStorage or state
+          // localStorage.setItem("user_id", response.data.user_id);
+          localStorage.setItem("user_id", response.data.user_id);
+          navigate("/home");
+        }
+      } catch (error) {
+        console.error("Session check failed", error);
+      }
+    };
+
+    checkSession();
+  }, [navigate]);
+  
+
+  {/*
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token || user) {
       navigate("/home");
     }
   }, [user, navigate]);
+  */}
 
   if(user){
     navigate('/home');
@@ -57,11 +82,12 @@ function Login(): JSX.Element {
       const formInput:formData = {email: email, password: password};
       const response: AxiosResponse = await api.post('/api/user/login', formInput);
       const dataFromAPI: responseData = response.data;
-      const { token, user_id } = response.data;
+      const { token, user_id, username } = response.data;
       console.log(response.data);
       console.log(dataFromAPI);
       localStorage.setItem("token", token);
       localStorage.setItem("user_id", user_id);
+      localStorage.setItem("username", username);
       
       dispatch(addUser({email: dataFromAPI.email, token: dataFromAPI.token}));// no need to store the token in redux
       setEmail('');
@@ -91,7 +117,7 @@ function Login(): JSX.Element {
       <Card className="w-[400px]">
       <CardHeader>
         <CardTitle className="text-2xl font-semibold text-center bg-gradient-to-r from-green-500 via-green-600 to-green-700 text-transparent bg-clip-text">Login</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
+        <CardDescription className="text-center">Sign in to your account</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid w-full gap-4">

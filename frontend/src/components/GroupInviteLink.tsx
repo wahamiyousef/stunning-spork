@@ -17,7 +17,7 @@ const GroupInviteButton = ({ leaderId, group_id }) => {
     <div>
       <Button 
         onClick={handleCopyLink}
-        className="hover:bg-blue-600 bg-blue-500 text-white rounded-lg sm:h-9 h-14 sm:text-sm text-lg"
+        className="hover:bg-blue-600 bg-blue-500 text-white rounded-lg sm:h-9 h-14 sm:text-sm text-lg w-full"
       >
         {linkCopied ? 'Link Copied!' : 'Copy invite link'}
       </Button>

@@ -63,6 +63,9 @@ export default function Navbar(): JSX.Element{
                                     <Link to="/groups" >
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>View current groups</NavigationMenuLink>
                                     </Link>
+                                    <Link to="/join_group/1/1/1" >
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>group 1 link</NavigationMenuLink>
+                                    </Link>
                                 </NavigationMenuContent>
                                 </NavigationMenuItem>
                             </NavigationMenuList>}

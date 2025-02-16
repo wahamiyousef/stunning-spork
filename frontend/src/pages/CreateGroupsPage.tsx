@@ -17,6 +17,7 @@ function CreateGroupsPage() {
       console.log(groupName);
       console.log(artist);
       const response = await axios.post("http://127.0.0.1:8000/api/create_group", {
+        group_id: user_id,
         user_id: user_id,
         leader_id: user_id,
         group_name: groupName,
