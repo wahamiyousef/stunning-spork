@@ -27,8 +27,7 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-# tag parameter helps group the routes for better documentation in the Swagger UI]
-#app.include_router(examgenerator_route, prefix="/api", tags=["nebius"])
+# tag parameter helps group the routes for better documentation in the Swagger UI
 app.include_router(group_router, prefix="/api", tags=["groups"])
 app.include_router(authentication_router, prefix="/api", tags=["authentication"])
 

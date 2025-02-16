@@ -7,6 +7,7 @@ import { CircleArrowLeft } from "lucide-react";
 function CreateGroupsPage() {
   const navigate = useNavigate();
   const [groupName, setGroupName] = useState("");
+  const user_id = Number(localStorage.getItem("user_id"));
   const [artist, setArtist] = useState("");
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -16,7 +17,8 @@ function CreateGroupsPage() {
       console.log(groupName);
       console.log(artist);
       const response = await axios.post("http://127.0.0.1:8000/api/create_group", {
-        user_id: 1,  // Example static user ID
+        user_id: user_id,
+        leader_id: user_id,
         group_name: groupName,
         artist: artist,
       }, {

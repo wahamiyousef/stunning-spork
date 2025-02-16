@@ -6,7 +6,8 @@ import { useState, useEffect } from "react";
 import { CircleArrowLeft } from "lucide-react";
 
 interface Group {
-  user_id: number;
+  group_id: number;
+  leader_id: number;
   group_name: string;
   artist: string;
   created_at: string;
@@ -15,13 +16,16 @@ interface Group {
 function GroupsPage() {
   const navigate: NavigateFunction = useNavigate();
   const [groups, setGroups] = useState<Group[]>([]);
+  const user_id = Number(localStorage.getItem("user_id"));
 
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/get_groups/1");
-        if (response.data) {
-          setGroups([response.data]);
+        const response = await axios.get(`http://127.0.0.1:8000/api/get_groups/${user_id}`);
+        console.log('Response Data: ', response.data);
+
+        if (response.data && response.data.groups) {
+          setGroups(response.data.groups);
         } else {
           setGroups([]);
         }
@@ -43,8 +47,8 @@ function GroupsPage() {
 
       <div className="flex flex-col gap-6 justify-center w-full sm:flex-row sm:flex-wrap md:gap-8"> 
         {groups.length > 0 ? (
-          groups.map((group, index) => (
-            <Card key={index} className="bg-white rounded-xl shadow-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3 text-center">
+          groups.map((group) => (
+            <Card key={group.group_id} className="bg-white rounded-xl shadow-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3 text-center">
               <CardHeader>
                 <CardTitle>{group.group_name}</CardTitle>
                 <CardDescription>Artist: {group.artist}</CardDescription>
@@ -53,10 +57,10 @@ function GroupsPage() {
                 <p>Created at: {new Date(group.created_at).toLocaleDateString()}</p>
               </CardContent>
               <CardFooter className="gap-3">
-                <Button onClick={() => navigate(`/groups/${group.user_id}`)} className="w-full hover:bg-[#7e7cf0] bg-[#6B6ACC] text-white rounded-lg">
+                <Button onClick={() => navigate(`/groups/${group.leader_id}/${group.group_id}`)} className="w-full hover:bg-[#7e7cf0] bg-[#6B6ACC] text-white rounded-lg">
                   View Group
                 </Button>
-                <Button onClick={() => navigate(`/groups/${group.user_id}`)} className="w-full hover:bg-green-600 bg-green-700 text-white rounded-lg">
+                <Button onClick={() => navigate(`/groups/${group.group_id}`)} className="w-full hover:bg-green-600 bg-green-700 text-white rounded-lg">
                   Edit Group
                 </Button>
               </CardFooter>

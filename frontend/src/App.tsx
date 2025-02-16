@@ -13,6 +13,8 @@ import GroupsPage from './pages/GroupsPage';
 import CreateGroupsPage from './pages/CreateGroupsPage';
 import Navbar from './components/Navbar';
 import SignUp from './pages/SignUp';
+import ViewGroupPage from './pages/ViewGroupPage';
+import JoinGroupPage from './pages/JoinGroupPage';
 // import { SharedDataProvider } from './components/SharedDataProvider';
 
 type userType = {
@@ -30,6 +32,7 @@ function App() {
     const checkSession = async () => {
       try {
         const response = await api.get("/api/user/session");
+        console.log('test', response);
         const user: userType = { token: response.data.token, email: response.data.email };
         dispatch(addUser(user)); // Update Redux with user data
       } catch (error) {
@@ -62,6 +65,8 @@ function App() {
             <Route path='/home' element={user ? <HomePage /> : <Navigate to='/login' />} />
             <Route path='/groups' element={user ? <GroupsPage /> : <Navigate to='/login' />} />
             <Route path='/create-group' element={user ? <CreateGroupsPage /> : <Navigate to='/login' />} />
+            <Route path='/groups/:userId/:groupId' element={user ? <ViewGroupPage /> : <Navigate to='/login' />} />
+            <Route path='/join_group/:leaderId/:groupId/:userId' element={user ? <JoinGroupPage /> : <Navigate to='/login' />} />
           </Routes>
         </div>
     </Router>
